@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 560" width="400" height="560">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4f46e5" />
+      <stop offset="50%" stop-color="#7c3aed" />
+      <stop offset="100%" stop-color="#ec4899" />
+    </linearGradient>
+  </defs>
+  <rect width="400" height="560" fill="url(#grad)" rx="16" />
+  <circle cx="200" cy="200" r="110" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2" />
+  <circle cx="200" cy="200" r="85" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" />
+  <text x="200" y="220" font-size="72" text-anchor="middle" fill="#ffffff">📖</text>
+  <text x="200" y="380" font-family="'Plus Jakarta Sans', sans-serif" font-weight="bold" font-size="24" text-anchor="middle" fill="#ffffff">Digital Book</text>
+  <text x="200" y="420" font-family="'Plus Jakarta Sans', sans-serif" font-size="14" text-anchor="middle" fill="rgba(255,255,255,0.8)">Khmer &amp; Global Edition</text>
+</svg>

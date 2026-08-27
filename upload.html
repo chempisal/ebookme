@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="km" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ស្ទូឌីយោអាប់ឡូតសៀវភៅ | Book Uploader & Studio Management</title>
+    <meta name="description" content="ផ្ទាំងគ្រប់គ្រង និងអាប់ឡូតសៀវភៅជា PDF តាមកុំព្យូទ័រ និង Google Drive ជាមួយប្រព័ន្ធ Google Sheets Cloud Sync។">
+    
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- PDF.js Library from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+</head>
+<body>
+
+    <!-- ======================================================================
+         Top Header
+         ====================================================================== -->
+    <header class="app-header">
+        <div class="header-container">
+            <a href="upload.html" class="brand-logo">
+                <div class="logo-icon-wrap" style="background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);">📤</div>
+                <div class="logo-text-wrap">
+                    <span class="brand-name">ស្ទូឌីយោអាប់ឡូត</span>
+                    <span class="brand-tagline">Uploader &amp; Management Studio</span>
+                </div>
+            </a>
+
+            <!-- Navigation Link back to Reader -->
+            <nav class="nav-tabs-group">
+                <a href="index.html" class="nav-tab-btn" style="text-decoration: none;">
+                    <span class="nav-icon">📖</span>
+                    <span class="nav-label">ទៅកាន់បណ្ណាល័យ (Reader)</span>
+                </a>
+                <button class="nav-tab-btn active" style="cursor: default;">
+                    <span class="nav-icon">📤</span>
+                    <span class="nav-label">គ្រប់គ្រង &amp; អាប់ឡូត</span>
+                </button>
+            </nav>
+
+            <!-- Header Right Controls -->
+            <div class="header-actions">
+                <button class="theme-toggle-btn cloud-sync-header-btn" id="cloud-sync-btn" title="ភ្ជាប់ Google Sheet Cloud Database">
+                    ☁️ <span id="cloud-status-badge" class="cloud-status-dot disconnected"></span>
+                    <span class="nav-label" id="cloud-status-text">Google Sheet</span>
+                </button>
+                <button class="theme-toggle-btn" id="theme-toggle-btn" title="ប្តូរពន្លឺ / ងងឹត">
+                    ☀️ <span class="nav-label">ពន្លឺ</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ======================================================================
+         Main Uploader & Studio Section
+         ====================================================================== -->
+    <main class="main-content-container">
+        
+        <div class="uploader-grid-layout">
+            <!-- Left: Drag & Drop and PDF Processing -->
+            <div class="studio-card">
+                <div class="shelf-title-row">
+                    <h2 class="section-title" id="upload-form-title">📤 អាប់ឡូតសៀវភៅ PDF ថ្មី (Upload Book)</h2>
+                </div>
+
+                <!-- Source Mode Selector (Local vs Google Drive) -->
+                <div class="upload-source-toggle-row">
+                    <button type="button" class="source-toggle-btn active" id="src-mode-local">📁 ឯកសារក្នុងម៉ាស៊ីន (Local PDF)</button>
+                    <button type="button" class="source-toggle-btn" id="src-mode-gdrive">☁️ Google Drive Link</button>
+                </div>
+
+                <!-- PDF Dropzone (Local File) -->
+                <div class="pdf-dropzone" id="pdf-dropzone">
+                    <span class="dropzone-icon">📄</span>
+                    <div class="dropzone-title">ទម្លាក់ឯកសារ PDF នៅទីនេះ ឬចុចដើម្បីជ្រើសរើស</div>
+                    <div class="dropzone-subtitle">គាំទ្រឯកសារប្រភេទ .PDF (Auto extract Cover &amp; Page count)</div>
+                    <input type="file" id="pdf-file-input" accept="application/pdf" class="hidden" />
+                </div>
+
+                <!-- Google Drive Link Input Box (Hidden by default) -->
+                <div class="gdrive-input-box hidden" id="gdrive-input-box">
+                    <div class="gdrive-header">
+                        <span style="font-size: 28px;">☁️</span>
+                        <div>
+                            <strong style="font-size: 14px; display: block;">ទាញយកសៀវភៅពី Google Drive / Web Link</strong>
+                            <small class="text-muted">បិទភ្ជាប់ Share Link នៃឯកសារ PDF របស់អ្នក</small>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top: 12px;">
+                        <input type="url" id="gdrive-url-input" placeholder="https://drive.google.com/file/d/1AbC.../view?usp=sharing" />
+                    </div>
+                    <div style="display: flex; gap: 8px; margin-top: 10px;">
+                        <button type="button" class="btn-primary" id="gdrive-fetch-btn" style="flex: 1; justify-content: center;">
+                            ⚡ ទាញយកស្វ័យប្រវត្តិ (Fetch)
+                        </button>
+                        <button type="button" class="btn-secondary" id="gdrive-open-direct-btn" style="padding: 8px 12px; font-size: 12.5px;" title="បើកតំណភ្ជាប់ក្នុងផ្ទាំងថ្មី">
+                            🔗 បើក Link ផ្ទាល់
+                        </button>
+                    </div>
+                    <div class="gdrive-tip-box">
+                        💡 <strong>របៀបចែករំលែកពី Google Drive:</strong><br>
+                        1. ចុចកណ្ដុរស្ដាំលើ File PDF ➔ ជ្រើសរើស <em>Share</em> ➔ កំណត់ទៅ <em>"Anyone with the link (អ្នកដែលមាន Link អាចមើលបាន)"</em><br>
+                        2. ចុច Copy Link រួច Paste ក្នុងប្រអប់ខាងលើ ហើយចុច <strong>"⚡ ទាញយកស្វ័យប្រវត្តិ"</strong><br>
+                        3. ប្រសិនបើ Google Drive រារាំង (CORS) អ្នកអាចចុច <strong>"🔗 បើក Link ផ្ទាល់"</strong> ដើម្បីទាញយក File មកម៉ាស៊ីន រួចទម្លាក់ចូលផ្ទាំង <em>"Local PDF"</em>។
+                    </div>
+                </div>
+
+                <!-- Uploaded PDF Analysis Preview -->
+                <div class="upload-preview-container hidden" id="upload-preview-container">
+                    <img src="" id="upload-cover-preview" class="upload-cover-preview" alt="Cover Preview" />
+                    <div class="upload-preview-meta">
+                        <div class="preview-badge-row">
+                            <span class="upload-badge" id="upload-filename-badge">document.pdf</span>
+                            <span class="upload-badge" id="upload-pages-badge">0 ទំព័រ</span>
+                            <span class="upload-badge" id="upload-size-badge">0 KB</span>
+                        </div>
+                        <small class="text-muted">ក្របមុខត្រូវបានទាញយកពីទំព័រទី១ ដោយស្វ័យប្រវត្តិ</small>
+                        
+                        <div class="custom-cover-options" style="margin-top: 8px;">
+                            <label style="font-size: 12px; font-weight: 600; display: block; margin-bottom: 4px;">ឬប្តូររូបភាពក្របមុខ:</label>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                <button type="button" class="btn-secondary" style="padding: 4px 10px; font-size: 11.5px;" onclick="document.getElementById('cover-file-input').click()">
+                                    🖼️ ជ្រើសរូបភាពពីម៉ាស៊ីន
+                                </button>
+                                <select id="preset-cover-select" style="padding: 4px 8px; font-size: 11.5px;">
+                                    <option value="">🎨 ជ្រើសរើសស្ទីលក្របសិល្បៈ</option>
+                                    <option value="purple">🔮 ពណ៌ស្វាយ Indigo (Purple)</option>
+                                    <option value="blue">💻 ពណ៌ខៀវ Modern AI (Blue)</option>
+                                    <option value="emerald">🚀 ពណ៌បៃតង Business (Emerald)</option>
+                                    <option value="amber">🏛️ ពណ៌ទឹកក្រូច Amber (Heritage)</option>
+                                    <option value="rose">✨ ពណ៌ផ្កាឈូក Rose (Vibrant)</option>
+                                </select>
+                                <input type="file" id="cover-file-input" accept="image/*" class="hidden" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Metadata Form -->
+            <div class="studio-card">
+                <form id="book-upload-form" class="book-form">
+                    <div class="form-group">
+                        <label class="form-label" for="book-title-input">ចំណងជើងសៀវភៅ (Book Title) *</label>
+                        <input type="text" id="book-title-input" required placeholder="ឧ. រឿងទុំទាវ ឬ AI Handbook..." />
+                    </div>
+
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label class="form-label" for="book-author-input">អ្នកនិពន្ធ (Author)</label>
+                            <input type="text" id="book-author-input" placeholder="ឈ្មោះអ្នកនិពន្ធ..." />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="book-category-select">ប្រភេទ (Category)</label>
+                            <select id="book-category-select">
+                                <option value="អក្សរសិល្ប៍ (Literature)">📜 អក្សរសិល្ប៍ (Literature)</option>
+                                <option value="បច្ចេកវិទ្យា (Technology)">💻 បច្ចេកវិទ្យា (Technology)</option>
+                                <option value="ធុរកិច្ច (Business)">🚀 ធុរកិច្ច (Business)</option>
+                                <option value="ប្រវត្តិសាស្ត្រ (History)">🏛️ ប្រវត្តិសាស្ត្រ (History)</option>
+                                <option value="ការអប់រំ (Education)">🎓 ការអប់រំ (Education)</option>
+                                <option value="ទស្សនវិជ្ជា (Philosophy)">💡 ទស្សនវិជ្ជា (Philosophy)</option>
+                                <option value="ទូទៅ (General)">📚 ទូទៅ (General)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="book-description-input">ការពិពណ៌នាសង្ខេប (Description)</label>
+                        <textarea id="book-description-input" rows="3" placeholder="រៀបរាប់សង្ខេបអំពីខ្លឹមសារសៀវភៅ..."></textarea>
+                    </div>
+
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label class="form-label" for="book-year-input">ឆ្នាំបោះពុម្ព (Year)</label>
+                            <input type="number" id="book-year-input" min="1900" max="2099" value="2026" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="book-tags-input">Tags (បំបែកដោយក្បៀស ,)</label>
+                            <input type="text" id="book-tags-input" placeholder="ឧ. រឿងបុរាណ, ខ្មែរ, PDF" />
+                        </div>
+                    </div>
+
+                    <div class="form-actions-row">
+                        <button type="submit" class="btn-primary" id="upload-submit-btn" style="flex: 1;">
+                            🚀 រក្សាទុក និងបោះពុម្ព (Publish Book)
+                        </button>
+                        <button type="button" class="btn-secondary" id="upload-reset-btn">
+                            🔄 សម្អាត
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Studio Management Table -->
+        <div class="studio-card">
+            <div class="studio-stats-header">
+                <div>
+                    <h2 class="section-title">📋 គ្រប់គ្រងសៀវភៅក្នុងប្រព័ន្ធ (Manage Books)</h2>
+                    <small class="text-muted">សៀវភៅទាំងអស់ត្រូវបានរក្សាទុកក្នុង IndexedDB និង Google Sheets របស់អ្នក</small>
+                </div>
+
+                <div class="storage-stats-pills">
+                    <div class="stat-pill">សៀវភៅសរុប: <strong id="storage-total-books">0</strong></div>
+                    <div class="stat-pill">ទំហំផ្ទុក: <strong id="storage-total-size">0 MB</strong></div>
+                    <button class="btn-secondary" id="export-backup-btn" style="padding: 6px 12px; font-size: 12px;">💾 Export Backup</button>
+                    <button class="btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="document.getElementById('import-backup-input').click()">📥 Restore Backup</button>
+                    <input type="file" id="import-backup-input" accept=".json" class="hidden" />
+                </div>
+            </div>
+
+            <div style="margin-bottom: 12px; max-width: 360px;">
+                <input type="text" id="studio-search-input" placeholder="🔍 ស្វែងរកក្នុងតារាង..." style="width: 100%; padding: 8px 12px;" />
+            </div>
+
+            <div class="studio-table-container">
+                <table class="studio-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">ល.រ</th>
+                            <th style="width: 60px;">ក្រប</th>
+                            <th>ចំណងជើង &amp; អ្នកនិពន្ធ</th>
+                            <th>ប្រភេទ</th>
+                            <th>ទំព័រ</th>
+                            <th>ទំហំ</th>
+                            <th style="width: 170px; text-align: right;">សកម្មភាព</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studio-books-table-body">
+                        <!-- Table rows rendered here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- ======================================================================
+         Interactive PDF Reader Modal (For Previewing in Studio)
+         ====================================================================== -->
+    <div id="pdf-reader-modal" class="pdf-reader-modal hidden" data-reader-theme="day">
+        <div class="reader-top-progress-bar-bg">
+            <div id="reader-top-progress" class="reader-top-progress-bar"></div>
+        </div>
+
+        <header class="reader-header-bar">
+            <div class="reader-header-left">
+                <button class="reader-tool-btn" id="reader-sidebar-toggle">📑 Sidebar</button>
+                <div class="reader-book-info">
+                    <span class="reader-title" id="reader-book-title">ចំណងជើងសៀវភៅ</span>
+                    <span class="reader-author" id="reader-book-author">អ្នកនិពន្ធ</span>
+                </div>
+            </div>
+
+            <div class="reader-header-center">
+                <div class="btn-group-pill">
+                    <button class="reader-tool-btn active" id="view-single-btn">📄 Single</button>
+                    <button class="reader-tool-btn" id="view-spread-btn">📖 Spread</button>
+                    <button class="reader-tool-btn" id="view-scroll-btn">📜 Scroll</button>
+                </div>
+                <div class="btn-group-pill">
+                    <button class="reader-tool-btn active" id="theme-day-btn">☀️ ថ្ងៃ</button>
+                    <button class="reader-tool-btn" id="theme-sepia-btn">☕ Sepia</button>
+                    <button class="reader-tool-btn" id="theme-dark-btn">🌙 យប់</button>
+                </div>
+            </div>
+
+            <div class="reader-header-right">
+                <button class="reader-tool-btn" id="reader-fullscreen-btn">⛶</button>
+                <button class="reader-tool-btn" id="reader-close-btn" style="background: var(--color-danger); color: #fff;">✕ បិទ</button>
+            </div>
+        </header>
+
+        <div class="reader-main-layout">
+            <aside class="reader-sidebar" id="reader-sidebar">
+                <div class="reader-sidebar-tabs">
+                    <button class="sidebar-tab-btn active" id="tab-thumbnails-btn">🖼️ ទំព័រ (Pages)</button>
+                    <button class="sidebar-tab-btn" id="tab-bookmarks-btn">🔖 ចំណាំ (Notes)</button>
+                </div>
+                <div class="reader-sidebar-content">
+                    <div class="reader-thumbnails-grid" id="reader-thumbnails-list"></div>
+                    <div id="bookmark-composer-box" class="bookmark-composer-box hidden">
+                        <label style="font-size: 12px; font-weight: 700;">📌 បន្ថែមចំណាំសម្រាប់ទំព័រនេះ</label>
+                        <input type="text" id="reader-bookmark-note-input" placeholder="សរសេរចំណាំ..." />
+                        <button class="btn-primary" id="reader-save-bookmark-btn" style="padding: 6px 12px; font-size: 12px;">+ រក្សាទុក</button>
+                    </div>
+                    <div class="reader-bookmarks-list hidden" id="reader-bookmarks-list"></div>
+                </div>
+            </aside>
+
+            <div class="reader-viewport" id="reader-canvas-container"></div>
+
+            <div class="reader-floating-toolbar" id="reader-floating-toolbar">
+                <div class="reader-nav-group">
+                    <button class="nav-arrow-btn" id="reader-prev-btn">◀</button>
+                    <div class="page-jump-box">
+                        <span>ទំព័រ</span>
+                        <input type="number" id="reader-page-input" class="page-input-field" min="1" value="1" />
+                        <span>/ <span id="reader-total-pages">1</span></span>
+                    </div>
+                    <button class="nav-arrow-btn" id="reader-next-btn">▶</button>
+                </div>
+                <input type="range" id="reader-page-slider" min="1" max="1" value="1" style="width: 110px; cursor: pointer;" />
+                <div class="reader-zoom-group">
+                    <button class="reader-zoom-btn" id="reader-zoom-out">🔍-</button>
+                    <button class="reader-zoom-btn" id="reader-zoom-reset">100%</button>
+                    <button class="reader-zoom-btn" id="reader-zoom-in">🔍+</button>
+                    <button class="reader-zoom-btn" id="reader-fit-width">Fit ↔</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================================
+         Google Sheets Cloud Sync Modal
+         ====================================================================== -->
+    <div id="cloud-sync-modal" class="modal-backdrop hidden">
+        <div class="cloud-sync-modal-card">
+            <button class="modal-close-btn" id="cloud-sync-close-btn">✕</button>
+            
+            <div class="cloud-sync-header">
+                <div class="cloud-icon-badge">☁️</div>
+                <div>
+                    <h2 style="font-size: 20px; font-weight: 800;">Google Sheets Cloud Database</h2>
+                    <p style="font-size: 13px; color: var(--text-secondary);">សមកាលកម្មសៀវភៅ និងទិន្នន័យរួមគ្នារវាងគ្រប់ឧបករណ៍ (Multi-Device Sync)</p>
+                </div>
+            </div>
+
+            <!-- Connection Status Banner -->
+            <div class="cloud-status-banner" id="cloud-status-banner">
+                <div class="status-left">
+                    <span class="status-indicator-dot" id="modal-status-dot"></span>
+                    <div>
+                        <strong id="modal-status-title">ស្ថានភាព: មិនទាន់ភ្ជាប់</strong>
+                        <small id="cloud-last-sync-label" style="display: block; color: var(--text-muted);">Sync ចុងក្រោយ: —</small>
+                    </div>
+                </div>
+                <div class="status-right" id="cloud-banner-actions">
+                    <button type="button" class="btn-primary btn-sm" id="btn-quick-sync">🔄 Sync ឥឡូវនេះ</button>
+                </div>
+            </div>
+
+            <!-- Connection URL Form -->
+            <div class="cloud-form-section">
+                <label class="form-label" for="cloud-script-url-input">Google Apps Script Web App URL *</label>
+                <div style="display: flex; gap: 8px;">
+                    <input type="url" id="cloud-script-url-input" placeholder="https://script.google.com/macros/s/.../exec" style="flex: 1;" />
+                    <button type="button" class="btn-primary" id="btn-save-cloud-config">💾 ភ្ជាប់ (Connect)</button>
+                    <button type="button" class="btn-secondary" id="btn-disconnect-cloud">🔌 ផ្តាច់</button>
+                </div>
+            </div>
+
+            <!-- Sync Operations Row -->
+            <div class="cloud-sync-actions-box">
+                <span style="font-size: 13px; font-weight: 700; display: block; margin-bottom: 8px;">សកម្មភាពទិន្នន័យ Cloud:</span>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button type="button" class="btn-secondary" id="btn-push-all-to-cloud">
+                        📤 បញ្ជូនសៀវភៅទាំងអស់ទៅ Google Sheet (Push)
+                    </button>
+                    <button type="button" class="btn-secondary" id="btn-pull-all-from-cloud">
+                        📥 ទាញយកទិន្នន័យពី Google Sheet មកម៉ាស៊ីន (Pull)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step-by-Step Setup Guide Accordion -->
+            <div class="cloud-guide-card">
+                <div class="cloud-guide-title">
+                    <span>📖 របៀបបង្កើត Google Apps Script API ក្នុង 1 នាទី (ងាយស្រួលបំផុត)</span>
+                    <button type="button" class="btn-primary btn-sm" id="btn-copy-apps-script">📋 ចម្លងកូដ Apps Script</button>
+                </div>
+                <ol class="cloud-guide-steps">
+                    <li>បើក <strong>Google Drive</strong> ➔ បង្កើត <strong>Google Sheets</strong> ថ្មីមួយ (ឧ. ឈ្មោះ <em>"Bookstore Database"</em>)</li>
+                    <li>នៅលើ Menu ខាងលើ ចុច <strong>Extensions (ផ្នែកបន្ថែម)</strong> ➔ <strong>Apps Script</strong></li>
+                    <li>លុបកូដចាស់ចោលទាំងអស់ រួចចុចប៊ូតុង <strong>"📋 ចម្លងកូដ Apps Script"</strong> ខាងលើ រួច <strong>Paste</strong> ចូល ➔ ចុច Save (💾)</li>
+                    <li>ចុចប៊ូតុងខៀវ <strong>Deploy</strong> ➔ <strong>New deployment</strong> ➔ ចុចរូបកង់ជ្រើស <strong>Web app</strong> ➔ ត្រង់ <em>Who has access</em> ជ្រើសរើស <strong>"Anyone"</strong> ➔ ចុច <strong>Deploy</strong> រួច Copy <strong>Web App URL</strong> មកដាក់ក្នុងប្រអប់ខាងលើ!</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================================
+         Toast Notification Drawer & Loading Overlay
+         ====================================================================== -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <div id="loading-overlay" class="loading-overlay hidden">
+        <div class="spinner"></div>
+        <p id="loading-overlay-text">កំពុងដំណើរការ...</p>
+        <button type="button" class="btn-secondary" id="cancel-loading-btn" style="margin-top: 8px; padding: 6px 16px; font-size: 12px; background: rgba(255,255,255,0.15); color: #fff; border-radius: 9999px;">
+            ✕ បិទ / បោះបង់ (Cancel)
+        </button>
+    </div>
+
+    <!-- Application JavaScript Modules -->
+    <script src="js/db.js"></script>
+    <script src="js/sample-data.js"></script>
+    <script src="js/cloud-sheet.js"></script>
+    <script src="js/pdf-viewer.js"></script>
+    <script src="js/uploader.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

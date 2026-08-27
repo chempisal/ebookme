@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="km" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>បណ្ណាល័យឌីជីថល | Digital Bookstore & Online PDF e-Reader</title>
+    <meta name="description" content="កម្មវិធីមើលនិងអានសៀវភៅឌីជីថលជា PDF អនឡាញ រួមជាមួយប្រព័ន្ធអាប់ឡូត និងគ្រប់គ្រងសៀវភៅទំនើប។">
+    
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- PDF.js Library from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+</head>
+<body>
+
+    <!-- ======================================================================
+         Top Application Header
+         ====================================================================== -->
+    <header class="app-header">
+        <div class="header-container">
+            <a href="#" class="brand-logo" id="brand-logo-link">
+                <div class="logo-icon-wrap">📚</div>
+                <div class="logo-text-wrap">
+                    <span class="brand-name">បណ្ណាល័យឌីជីថល</span>
+                    <span class="brand-tagline">Digital Bookstore & e-Reader</span>
+                </div>
+            </a>
+
+            <!-- Navigation Tabs -->
+            <nav class="nav-tabs-group" id="main-navigation-tabs">
+                <button class="nav-tab-btn active" data-view="reader" id="nav-reader-btn">
+                    <span class="nav-icon">📖</span>
+                    <span class="nav-label">បណ្ណាល័យ (Catalog)</span>
+                </button>
+                <button class="nav-tab-btn" data-view="my-library" id="nav-my-library-btn">
+                    <span class="nav-icon">🔖</span>
+                    <span class="nav-label">សៀវភៅខ្ញុំ (My Library)</span>
+                </button>
+                <a href="upload.html" class="nav-tab-btn" style="text-decoration: none;">
+                    <span class="nav-icon">📤</span>
+                    <span class="nav-label">អាប់ឡូតសៀវភៅ (Studio)</span>
+                </a>
+            </nav>
+
+            <!-- Header Right Controls -->
+            <div class="header-actions">
+                <button class="theme-toggle-btn cloud-sync-header-btn" id="cloud-sync-btn" title="ភ្ជាប់ Google Sheet Cloud Database">
+                    ☁️ <span id="cloud-status-badge" class="cloud-status-dot disconnected"></span>
+                    <span class="nav-label" id="cloud-status-text">Google Sheet</span>
+                </button>
+                <button class="theme-toggle-btn" id="theme-toggle-btn" title="ប្តូរពន្លឺ / ងងឹត">
+                    ☀️ <span class="nav-label">ពន្លឺ</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ======================================================================
+         Main Views Container
+         ====================================================================== -->
+    <main class="main-content-container">
+
+        <!-- ==================================================================
+             VIEW 1: READER & EXPLORE CATALOG
+             ================================================================== -->
+        <section id="view-reader" class="view-section">
+            
+            <!-- Hero Featured Showcase -->
+            <div class="hero-showcase" id="hero-featured-content">
+                <!-- Injected dynamically via JS -->
+            </div>
+
+            <!-- Search, Filter & Sort Bar -->
+            <div class="catalog-controls-bar">
+                <div class="search-and-sort-row">
+                    <div class="search-box-wrapper">
+                        <span class="search-icon-inside">🔍</span>
+                        <input type="text" id="main-search-input" class="main-search-input" placeholder="ស្វែងរកចំណងជើងសៀវភៅ អ្នកនិពន្ធ ឬពាក្យគន្លឹះ..." />
+                    </div>
+
+                    <div class="sort-wrapper">
+                        <label for="sort-select" class="sort-label">តម្រៀបតាម:</label>
+                        <select id="sort-select" class="sort-select">
+                            <option value="newest">✨ សៀវភៅថ្មីៗ (Newest)</option>
+                            <option value="rating">⭐ ពិន្ទុខ្ពស់ (Top Rated)</option>
+                            <option value="reads">🔥 អ្នកអានច្រើន (Popular)</option>
+                            <option value="title">🔤 ចំណងជើង (A-Z)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Category Pills -->
+                <div class="category-pills-row" id="category-pills-container">
+                    <button class="category-pill active" data-category="all">✨ ទាំងអស់ (All)</button>
+                    <button class="category-pill" data-category="អក្សរសិល្ប៍">📜 អក្សរសិល្ប៍ (Literature)</button>
+                    <button class="category-pill" data-category="បច្ចេកវិទ្យា">💻 បច្ចេកវិទ្យា & AI (Tech)</button>
+                    <button class="category-pill" data-category="ធុរកិច្ច">🚀 ធុរកិច្ច & ជោគជ័យ (Business)</button>
+                    <button class="category-pill" data-category="ប្រវត្តិសាស្ត្រ">🏛️ ប្រវត្តិសាស្ត្រ (History)</button>
+                    <button class="category-pill" data-category="ការអប់រំ">🎓 ការអប់រំ (Education)</button>
+                    <button class="category-pill" data-category="ទស្សនវិជ្ជា">💡 ទស្សនវិជ្ជា (Philosophy)</button>
+                </div>
+            </div>
+
+            <!-- Catalog Book Shelves -->
+            <div class="section-header-row">
+                <h2 class="section-title">
+                    <span>📚 បណ្តុំសៀវភៅទាំងអស់</span>
+                    <span class="section-count-badge" id="catalog-books-count"></span>
+                </h2>
+            </div>
+
+            <div class="books-grid" id="books-catalog-grid">
+                <!-- Book Cards rendered here -->
+            </div>
+        </section>
+
+        <!-- ==================================================================
+             VIEW 2: MY LIBRARY (Reading Progress, Favorites & History)
+             ================================================================== -->
+        <section id="view-my-library" class="view-section my-library-container hidden">
+            
+            <!-- Shelf 1: Continue Reading -->
+            <div class="shelf-box">
+                <div class="shelf-title-row">
+                    <h2 class="section-title">⏳ កំពុងអាន (Continue Reading)</h2>
+                </div>
+                <div class="continue-reading-grid" id="continue-reading-grid">
+                    <!-- Continue cards rendered here -->
+                </div>
+            </div>
+
+            <!-- Shelf 2: Favorites -->
+            <div class="shelf-box">
+                <div class="shelf-title-row">
+                    <h2 class="section-title">❤️ សៀវភៅដែលចូលចិត្ត (Favorites)</h2>
+                </div>
+                <div class="favorites-grid" id="favorites-grid">
+                    <!-- Favorites cards rendered here -->
+                </div>
+            </div>
+
+            <!-- Shelf 3: Reading History & Completed -->
+            <div class="shelf-box">
+                <div class="shelf-title-row">
+                    <h2 class="section-title">📜 ប្រវត្តិអាន (Reading History)</h2>
+                </div>
+                <div class="history-grid" id="history-grid">
+                    <!-- History rows rendered here -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ======================================================================
+         Interactive PDF Reader Studio Modal (Full-featured Reader)
+         ====================================================================== -->
+    <div id="pdf-reader-modal" class="pdf-reader-modal hidden" data-reader-theme="day">
+        
+        <!-- Top Reading Progress Indicator -->
+        <div class="reader-top-progress-bar-bg">
+            <div id="reader-top-progress" class="reader-top-progress-bar"></div>
+        </div>
+
+        <!-- Reader Top Toolbar -->
+        <header class="reader-header-bar">
+            <div class="reader-header-left">
+                <button class="reader-tool-btn" id="reader-sidebar-toggle" title="បើក/បិទ បញ្ជីទំព័រ & ចំណាំ">
+                    📑 Sidebar
+                </button>
+                <div class="reader-book-info">
+                    <span class="reader-title" id="reader-book-title">ចំណងជើងសៀវភៅ</span>
+                    <span class="reader-author" id="reader-book-author">អ្នកនិពន្ធ</span>
+                </div>
+            </div>
+
+            <!-- View Modes & Themes Group -->
+            <div class="reader-header-center">
+                <!-- View Mode Selector -->
+                <div class="btn-group-pill">
+                    <button class="reader-tool-btn active" id="view-single-btn" title="ទំព័រទោល">📄 Single</button>
+                    <button class="reader-tool-btn" id="view-spread-btn" title="ទំព័រគូ (Spread)">📖 Spread</button>
+                    <button class="reader-tool-btn" id="view-scroll-btn" title="រំកិលបន្តបន្ទាប់ (Scroll)">📜 Scroll</button>
+                </div>
+
+                <!-- Reading Themes -->
+                <div class="btn-group-pill">
+                    <button class="reader-tool-btn active" id="theme-day-btn" title="ពន្លឺថ្ងៃ">☀️ ថ្ងៃ</button>
+                    <button class="reader-tool-btn" id="theme-sepia-btn" title="ពណ៌ទឹកតែ Sepia">☕ Sepia</button>
+                    <button class="reader-tool-btn" id="theme-dark-btn" title="រាត្រី Dark">🌙 យប់</button>
+                </div>
+            </div>
+
+            <!-- Right Controls -->
+            <div class="reader-header-right">
+                <button class="reader-tool-btn" id="reader-fullscreen-btn" title="ពង្រីកពេញអេក្រង់">⛶</button>
+                <button class="reader-tool-btn" id="reader-close-btn" style="background: var(--color-danger); color: #fff;" title="បិទកម្មវិធីអាន">✕ បិទ</button>
+            </div>
+        </header>
+
+        <!-- Reader Workspace -->
+        <div class="reader-main-layout">
+            
+            <!-- Sidebar: Thumbnails & Bookmarks -->
+            <aside class="reader-sidebar" id="reader-sidebar">
+                <div class="reader-sidebar-tabs">
+                    <button class="sidebar-tab-btn active" id="tab-thumbnails-btn">🖼️ ទំព័រ (Pages)</button>
+                    <button class="sidebar-tab-btn" id="tab-bookmarks-btn">🔖 ចំណាំ (Notes)</button>
+                </div>
+
+                <div class="reader-sidebar-content">
+                    <!-- Thumbnails Grid -->
+                    <div class="reader-thumbnails-grid" id="reader-thumbnails-list">
+                        <!-- Thumbnails injected here -->
+                    </div>
+
+                    <!-- Bookmark Composer -->
+                    <div id="bookmark-composer-box" class="bookmark-composer-box hidden">
+                        <label style="font-size: 12px; font-weight: 700;">📌 បន្ថែមចំណាំសម្រាប់ទំព័រនេះ</label>
+                        <input type="text" id="reader-bookmark-note-input" placeholder="សរសេរចំណាំ ឬកំណត់ហេតុ..." />
+                        <button class="btn-primary" id="reader-save-bookmark-btn" style="padding: 6px 12px; font-size: 12px;">+ រក្សាទុកចំណាំ</button>
+                    </div>
+
+                    <!-- Bookmarks List -->
+                    <div class="reader-bookmarks-list hidden" id="reader-bookmarks-list">
+                        <!-- Bookmarks injected here -->
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Canvas Viewport -->
+            <div class="reader-viewport" id="reader-canvas-container">
+                <!-- PDF Canvas rendered here -->
+            </div>
+
+            <!-- Floating Bottom Navigation Pill -->
+            <div class="reader-floating-toolbar" id="reader-floating-toolbar">
+                <div class="reader-nav-group">
+                    <button class="nav-arrow-btn" id="reader-prev-btn" title="ទំព័រមុន (←)">◀</button>
+                    
+                    <div class="page-jump-box">
+                        <span>ទំព័រ</span>
+                        <input type="number" id="reader-page-input" class="page-input-field" min="1" value="1" />
+                        <span>/ <span id="reader-total-pages">1</span></span>
+                    </div>
+
+                    <button class="nav-arrow-btn" id="reader-next-btn" title="ទំព័របន្ទាប់ (→)">▶</button>
+                </div>
+
+                <!-- Page Jump Slider -->
+                <input type="range" id="reader-page-slider" min="1" max="1" value="1" style="width: 110px; cursor: pointer;" title="រំកិលទំព័រ" />
+
+                <!-- Zoom Controls -->
+                <div class="reader-zoom-group">
+                    <button class="reader-zoom-btn" id="reader-zoom-out" title="បង្រួម (-)">🔍-</button>
+                    <button class="reader-zoom-btn" id="reader-zoom-reset" title="ទំហំដើម 100%">100%</button>
+                    <button class="reader-zoom-btn" id="reader-zoom-in" title="ពង្រីក (+)">🔍+</button>
+                    <button class="reader-zoom-btn" id="reader-fit-width" title="សមល្មមទទឹងអេក្រង់">Fit ↔</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================================
+         Book Detail Modal
+         ====================================================================== -->
+    <div id="book-detail-modal" class="modal-backdrop hidden">
+        <div class="book-detail-modal-card">
+            <button class="modal-close-btn" id="detail-modal-close">✕</button>
+            <div class="detail-modal-body">
+                <div class="detail-cover-wrapper">
+                    <img src="" id="detail-cover-img" class="detail-cover-img" alt="Book Cover" />
+                </div>
+                <div class="detail-content-wrap">
+                    <span class="detail-badge-pill" id="detail-category">ប្រភេទ</span>
+                    <h2 class="detail-title" id="detail-title">ចំណងជើងសៀវភៅ</h2>
+                    <p class="detail-author">និពន្ធដោយ: <strong id="detail-author">អ្នកនិពន្ធ</strong></p>
+                    
+                    <div class="detail-meta-grid">
+                        <div>📅 ឆ្នាំបោះពុម្ព: <strong id="detail-year">2026</strong></div>
+                        <div>📄 ចំនួនទំព័រ: <strong id="detail-pages">100 ទំព័រ</strong></div>
+                        <div>⭐ ការវាយតម្លៃ: <strong id="detail-rating">5.0</strong></div>
+                        <div>🌐 ភាសា: <strong>ខ្មែរ / អង់គ្លេស</strong></div>
+                    </div>
+
+                    <div class="detail-desc-box" id="detail-description">
+                        ការពិពណ៌នាសង្ខេបអំពីសៀវភៅ...
+                    </div>
+
+                    <div class="detail-tags-row" id="detail-tags">
+                        <!-- Tag pills injected here -->
+                    </div>
+
+                    <div class="detail-actions-row">
+                        <button class="btn-primary" id="detail-read-btn">
+                            📖 អានសៀវភៅឥឡូវនេះ (Read Now)
+                        </button>
+                        <button class="btn-secondary" id="detail-fav-btn">
+                            🤍 បន្ថែមទៅចំណូលចិត្ត
+                        </button>
+                        <button class="btn-secondary" id="detail-download-btn">
+                            ⬇️ ទាញយក PDF
+                        </button>
+                        <button class="btn-secondary" id="detail-gdrive-save-btn" title="រក្សាទុក ឬបើកក្នុង Google Drive">
+                            ☁️ Google Drive
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================================
+         Google Sheets Cloud Sync Modal
+         ====================================================================== -->
+    <div id="cloud-sync-modal" class="modal-backdrop hidden">
+        <div class="cloud-sync-modal-card">
+            <button class="modal-close-btn" id="cloud-sync-close-btn">✕</button>
+            
+            <div class="cloud-sync-header">
+                <div class="cloud-icon-badge">☁️</div>
+                <div>
+                    <h2 style="font-size: 20px; font-weight: 800;">Google Sheets Cloud Database</h2>
+                    <p style="font-size: 13px; color: var(--text-secondary);">សមកាលកម្មសៀវភៅ និងទិន្នន័យរួមគ្នារវាងគ្រប់ឧបករណ៍ (Multi-Device Sync)</p>
+                </div>
+            </div>
+
+            <!-- Connection Status Banner -->
+            <div class="cloud-status-banner" id="cloud-status-banner">
+                <div class="status-left">
+                    <span class="status-indicator-dot" id="modal-status-dot"></span>
+                    <div>
+                        <strong id="modal-status-title">ស្ថានភាព: មិនទាន់ភ្ជាប់</strong>
+                        <small id="cloud-last-sync-label" style="display: block; color: var(--text-muted);">Sync ចុងក្រោយ: —</small>
+                    </div>
+                </div>
+                <div class="status-right" id="cloud-banner-actions">
+                    <button type="button" class="btn-primary btn-sm" id="btn-quick-sync">🔄 Sync ឥឡូវនេះ</button>
+                </div>
+            </div>
+
+            <!-- Connection URL Form -->
+            <div class="cloud-form-section">
+                <label class="form-label" for="cloud-script-url-input">Google Apps Script Web App URL *</label>
+                <div style="display: flex; gap: 8px;">
+                    <input type="url" id="cloud-script-url-input" placeholder="https://script.google.com/macros/s/.../exec" style="flex: 1;" />
+                    <button type="button" class="btn-primary" id="btn-save-cloud-config">💾 ភ្ជាប់ (Connect)</button>
+                    <button type="button" class="btn-secondary" id="btn-disconnect-cloud">🔌 ផ្តាច់</button>
+                </div>
+            </div>
+
+            <!-- Sync Operations Row -->
+            <div class="cloud-sync-actions-box">
+                <span style="font-size: 13px; font-weight: 700; display: block; margin-bottom: 8px;">សកម្មភាពទិន្នន័យ Cloud:</span>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button type="button" class="btn-secondary" id="btn-push-all-to-cloud">
+                        📤 បញ្ជូនសៀវភៅទាំងអស់ទៅ Google Sheet (Push)
+                    </button>
+                    <button type="button" class="btn-secondary" id="btn-pull-all-from-cloud">
+                        📥 ទាញយកទិន្នន័យពី Google Sheet មកម៉ាស៊ីន (Pull)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step-by-Step Setup Guide Accordion -->
+            <div class="cloud-guide-card">
+                <div class="cloud-guide-title">
+                    <span>📖 របៀបបង្កើត Google Apps Script API ក្នុង 1 នាទី (ងាយស្រួលបំផុត)</span>
+                    <button type="button" class="btn-primary btn-sm" id="btn-copy-apps-script">📋 ចម្លងកូដ Apps Script</button>
+                </div>
+                <ol class="cloud-guide-steps">
+                    <li>បើក <strong>Google Drive</strong> ➔ បង្កើត <strong>Google Sheets</strong> ថ្មីមួយ (ឧ. ឈ្មោះ <em>"Bookstore Database"</em>)</li>
+                    <li>នៅលើ Menu ខាងលើ ចុច <strong>Extensions (ផ្នែកបន្ថែម)</strong> ➔ <strong>Apps Script</strong></li>
+                    <li>លុបកូដចាស់ចោលទាំងអស់ រួចចុចប៊ូតុង <strong>"📋 ចម្លងកូដ Apps Script"</strong> ខាងលើ រួច <strong>Paste</strong> ចូល ➔ ចុច Save (💾)</li>
+                    <li>ចុចប៊ូតុងខៀវ <strong>Deploy</strong> ➔ <strong>New deployment</strong> ➔ ចុចរូបកង់ជ្រើស <strong>Web app</strong> ➔ ត្រង់ <em>Who has access</em> ជ្រើសរើស <strong>"Anyone"</strong> ➔ ចុច <strong>Deploy</strong> រួច Copy <strong>Web App URL</strong> មកដាក់ក្នុងប្រអប់ខាងលើ!</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================================
+         Toast Notification Drawer & Loading Overlay
+         ====================================================================== -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <div id="loading-overlay" class="loading-overlay hidden">
+        <div class="spinner"></div>
+        <p id="loading-overlay-text">កំពុងដំណើរការ...</p>
+        <button type="button" class="btn-secondary" id="cancel-loading-btn" style="margin-top: 8px; padding: 6px 16px; font-size: 12px; background: rgba(255,255,255,0.15); color: #fff; border-radius: 9999px;">
+            ✕ បិទ / បោះបង់ (Cancel)
+        </button>
+    </div>
+
+    <!-- Application JavaScript Modules -->
+    <script src="js/db.js"></script>
+    <script src="js/sample-data.js"></script>
+    <script src="js/cloud-sheet.js"></script>
+    <script src="js/pdf-viewer.js"></script>
+    <script src="js/uploader.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
